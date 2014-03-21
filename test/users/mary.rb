@@ -1,0 +1,1 @@
+User.new( "Mary Masterson", 27 )

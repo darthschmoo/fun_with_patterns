@@ -1,0 +1,1 @@
+User.new( "Wanda Wimbledon", 53 )

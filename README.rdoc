@@ -1,8 +1,67 @@
-= loader_pattern
+= fun_with_patterns
 
-Description goes here.
+A collection of patterns that I seem to keep re-implementing.  I'll be adding them here as I find time to revise and refactor.  Until then, the only one I've gotten around to is...
 
-== Contributing to loader_pattern
+
+== Loader Pattern
+
+The Loader pattern is a good way to customize/modularize part of your app's functionality.  
+
+It assumes that you have a directory or set of directories, which include a bunch of definitions of various 'thingies' in different files.  For each directory you request loaded, it will look for these 'thingies' and try to load each file.  You need only define a load_item() and an <optional> loader_pattern_register_item() method.  load_item() can simply call load( the_ruby_file.rb ).  If you don't define a load_item() method, it will assume the default case: there is ruby code in that thar file, and I'm gonna execute it.
+
+Say you have a bunch of tasks, scattered over three directories, written in a task-describing DSL, one task per file:
+
+    my_lib/builtin/tasks/mysql/backup.db.rb
+    my_lib/builtin/tasks/website/maintain.users.rb
+    ~/.config/mylib/tasks/email_wendy.rb
+    ~/.config/mylib/tasks/backup_pr0n.rb
+    ~/project/tasks/submit_invoice.rb
+    
+Inside each file would be some code describing the task:
+
+    Task.new( "backup:db" ) do |t|
+        t.run_schedule :daily
+        t.action "mysqldump -u{{user}} -h{{host}} {{db}}"
+        t.user "dbuser"
+        t.host "mysql.hostapalooza.com"
+        ... you get the idea
+    end
+
+The tasks could number in the hundreds.  You want your Task class to have a way of loading them, registering them so you can find them, and so on, so you can run them.
+
+Task might look like this:
+
+    class Task
+      include FunWith::Patterns::Loader
+      
+      alias :loader_pattern_registry_key :name
+      
+      def initialize( name )
+        @name = name           # in the example, it was "backup:db"
+      end
+    end
+    
+To load your tasks, you'd run:
+
+    Task.loader_pattern_load_from_dir( "mylib/builtin/tasks" )
+    Task.loader_pattern_load_from_dir( "~/.config/mylib/tasks" )
+    Task.loader_pattern_load_from_dir( "~/project/tasks" )
+    
+And to snag the backup.db task, you'd just say:
+
+    task = Task.loader_pattern_registry_lookup( "backup:db" )
+    task.run
+
+For each directory you give it, it will:
+
+1. load all the .rb files in the directory/subdirectories
+2. register them into the registry.
+
+You can get some interesting behavior by overwriting individual methods.  For example, loading individual configurations from YAML or JSON or XML.  There's an example in the test/ folder.
+
+
+
+== Contributing to fun_with_patterns
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
