@@ -1,9 +1,9 @@
-= fun_with_patterns
+= fun_with_patterns =
 
-A collection of patterns that I seem to keep re-implementing.  I'll be adding them here as I find time to revise and refactor.  Until then, the only one I've gotten around to is...
+A collection of patterns that I seem to keep re-implementing.  I'll be adding them here as I find time to revise and refactor.  Until then, the only ones I've gotten around to are...
 
 
-== Loader Pattern
+== Loader Pattern ==
 
 The Loader pattern is a good way to customize/modularize part of your app's functionality.  
 
@@ -58,6 +58,26 @@ For each directory you give it, it will:
 2. register them into the registry.
 
 You can get some interesting behavior by overwriting individual methods.  For example, loading individual configurations from YAML or JSON or XML.  There's an example in the test/ folder.
+
+
+
+== Reloadable ==
+
+You're in the command line, developing a new class, and you find yourself forever restarting the whole project to affect changes, or constantly copy-pasting the class into the command line.  Tired?  Frustrated?  Let .reloadable! help!  Just put the method inside your class / module definition, and call Klass.reload! whenever you like.
+
+    require 'fun_with_patterns'
+
+    module SausageFest
+      class BratwurstCounter
+        reloadable!
+      
+        def initialize( initial_brat_count )
+          ... and so on
+          
+          
+    (irb) >>  SausageFest::BratwurstCounter.reload! 
+      
+Easy as peasy.  Note, it may be buggy if the file only contains part of the definition, defines other classes as well, or performs other actions.  Use at your own risk, and at great peril to your coworkers.
 
 
 

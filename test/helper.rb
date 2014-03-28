@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'bundler'
+require 'fun_with_testing'
+require 'debugger'
 
 begin
   Bundler.setup(:default, :development)
@@ -25,4 +27,5 @@ class Test::Unit::TestCase
 end
 
 class FunWith::Patterns::TestCase < Test::Unit::TestCase
+  include FunWith::Testing::Assertions::Basics
 end
