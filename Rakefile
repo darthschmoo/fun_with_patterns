@@ -22,6 +22,11 @@ Jeweler::Tasks.new do |gem|
   gem.email = "keeputahweird@gmail.com"
   gem.authors = ["Bryce Anderson"]
   # dependencies defined in Gemfile
+  
+  gem.files = Dir.glob( File.join( ".", "lib", "**", "*.rb" ) ) + 
+              Dir.glob( File.join( ".", "test", "**", "*" ) ) +
+              %w( Gemfile Rakefile LICENSE.txt README.rdoc VERSION CHANGELOG.markdown )  
+  
 end
 Jeweler::RubygemsDotOrgTasks.new
 

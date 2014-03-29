@@ -1,7 +1,5 @@
 require 'rubygems'
 require 'bundler'
-require 'fun_with_testing'
-require 'debugger'
 
 begin
   Bundler.setup(:default, :development)

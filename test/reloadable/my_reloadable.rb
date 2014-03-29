@@ -5,5 +5,3 @@ class MyReloadable
     x * x
   end
 end
-
-puts "FINISHED LOADING #{__FILE__}"

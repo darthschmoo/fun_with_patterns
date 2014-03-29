@@ -1,15 +1,6 @@
-require 'fun_with_files'
-require 'fun_with_version_strings'
+require 'fun_with_gems'
 
-module FunWith
-  module Patterns
-  end
-end
-
-FunWith::Files::RootPath.rootify( FunWith::Patterns, __FILE__.fwf_filepath.dirname.up )
-FunWith::VersionStrings.version( FunWith::Patterns )
-
-FunWith::Patterns.root("lib", "fun_with").requir
+FunWith::Gems.make_gem_fun( "FunWith::Patterns" )
 
 Class.send( :include, FunWith::Patterns::MakeInstancesReloadable )
 Module.send( :include, FunWith::Patterns::MakeInstancesReloadable )

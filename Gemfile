@@ -10,9 +10,7 @@ group :development do
   gem "rdoc", "~> 3.12"
   gem "bundler", "~> 1.5"
   gem "jeweler", "~> 2.0"
-  gem "fun_with_testing"
-  gem "debugger"
+  # gem "debugger", "~> 1.6"
 end         
 
-gem "fun_with_files", "~> 0"
-gem "fun_with_version_strings", "~> 0"
+gem "fun_with_gems", "~> 0.0"

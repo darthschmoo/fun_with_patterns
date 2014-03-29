@@ -1,0 +1,8 @@
+Changelog
+=========
+
+
+0.0.3
+-----
+
+Added Reloadable pattern.
