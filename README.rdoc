@@ -46,6 +46,10 @@ To load your tasks, you'd run:
     Task.loader_pattern_load_from_dir( "mylib/builtin/tasks" )
     Task.loader_pattern_load_from_dir( "~/.config/mylib/tasks" )
     Task.loader_pattern_load_from_dir( "~/project/tasks" )
+
+    or
+    
+    Task.loader_pattern_load_from_dir( "mylib/builtin/tasks", "~/.config/mylib/tasks", "~/project/tasks" )
     
 And to snag the backup.db task, you'd just say:
 
@@ -58,6 +62,8 @@ For each directory you give it, it will:
 2. register them into the registry.
 
 You can get some interesting behavior by overwriting individual methods.  For example, loading individual configurations from YAML or JSON or XML.  There's an example in the test/ folder.
+
+Note: If you want to manage your own registry by redefining loader_pattern_load_from_dir( dir ), loader_pattern_register_item( item ), etc., make sure you handle and report exceptions.
 
 
 
@@ -79,6 +85,58 @@ You're in the command line, developing a new class, and you find yourself foreve
       
 Easy as peasy.  Note, it may be buggy if the file only contains part of the definition, defines other classes as well, or performs other actions.  Use at your own risk, and at great peril to your coworkers.
 
+
+
+== GetAndSet ==
+
+When active, this module behaves a lot like #attr_accessor.  
+The difference is, only one method is defined.  Whether you're 
+looking up the instance_variable's value or altering it depends 
+on whether you pass it an argument.
+
+
+    FunWith::Patterns::GetAndSet.activate
+    
+    class A
+      get_and_set( :radio, :radius, :radium )
+      get_and_set( :radiate )
+      get_and_set_boolean( :stringy, :flurmish )    # unless changed (! called or @var set some other way), defaults to false (stringy! returns false, not_stringy! returns true)
+     end
+    
+    a = A.new
+    
+    a.radius( 3.14159 )    # ==> 3.14159
+    a.radius()             # ==> 3.14159
+    
+    a.radium()             # ==> nil
+    a.radium( "radioactive" )  # ==> "radioactive"
+    a.radium( "Madame Curie")  # ==> "Madame Curie"
+    a.radium()                 # ==> "Madame Curie"
+    
+    a.stringy!     # ==> true
+    a.stringy?     # ==> true
+    a.not_stringy! # ==> false
+    a.stringy?     # ==> false
+    
+    a.flurmish?    # ==> false     # doesn't have a default, and hasn't had one of the !s run
+    a.not_flurmish? # ==> true   # unfortunate implementation side-effect.  Do not rely on it.
+    
+That's all you need to start using #get_and_set( :varname1, :varname2 )
+
+If you want to make all objects more extensible, you can make
+it available for all objects:
+
+    FunWith::Patterns::GetAndSet.activate( Object )
+    
+    class A
+    end
+    
+    a = A.new
+    
+    a.get_and_set( :radiate )
+    a.get_and_set_boolean( :stringy? )
+
+They work the same, but only apply to the object, not all objects of that class.
 
 
 == Contributing to fun_with_patterns

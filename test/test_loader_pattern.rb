@@ -12,6 +12,7 @@ class TestLoaderPattern < FunWith::Patterns::TestCase
   context "testing User" do
     setup do
       User.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users" ) )
+      User2.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users" ) )
     end
     
     should "have all the right methods" do
@@ -19,7 +20,8 @@ class TestLoaderPattern < FunWith::Patterns::TestCase
                       :loader_pattern_verbose,
                       :loader_pattern_load_item,
                       :loader_pattern_register_item,
-                      :loader_pattern_load_from_dir ]
+                      :loader_pattern_load_from_dir,
+                      :loader_pattern_configure ]
         assert_respond_to( User, method )
       end
     end
@@ -27,6 +29,16 @@ class TestLoaderPattern < FunWith::Patterns::TestCase
     should "load users from test/users and test/users/more" do
       assert User.loader_pattern_registry_lookup("Gary Milhouse")
       assert_equal 54, User.loader_pattern_registry_lookup("Gary Milhouse").age
+    end
+    
+    should "lookup via brackets" do
+      User.loader_pattern_configure( :bracketwise_lookup )
+      assert_equal 54, User["Gary Milhouse"].age
+      
+      # User2 class is already configured for bracketwise lookup
+      m = User2["Gary Milhouse"]
+      assert_kind_of( User, m )
+      assert_equal 54, m.age
     end
   end
   

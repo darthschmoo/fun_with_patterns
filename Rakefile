@@ -28,6 +28,7 @@ Jeweler::Tasks.new do |gem|
               %w( Gemfile Rakefile LICENSE.txt README.rdoc VERSION CHANGELOG.markdown )  
   
 end
+
 Jeweler::RubygemsDotOrgTasks.new
 
 require 'rake/testtask'

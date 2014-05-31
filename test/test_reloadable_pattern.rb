@@ -28,8 +28,6 @@ class TestReloadablePattern < FunWith::Patterns::TestCase
       assert defined?(MyReloadable)
       
       assert_respond_to( MyReloadable.new, :square )
-      
-      
     end
   end
 end
