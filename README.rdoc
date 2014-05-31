@@ -124,7 +124,7 @@ on whether you pass it an argument.
 That's all you need to start using #get_and_set( :varname1, :varname2 )
 
 If you want to make all objects more extensible, you can make
-it available for all objects:
+it available for all objects, not just classes and modules:
 
     FunWith::Patterns::GetAndSet.activate( Object )
     
