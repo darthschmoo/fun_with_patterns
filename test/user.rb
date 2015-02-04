@@ -23,3 +23,27 @@ class User2
     @age = age
   end
 end
+
+class User3
+  FunWith::Patterns::GetAndSet.activate( self )
+  
+  get_and_set :name, :age
+  
+  include FunWith::Patterns::Loader
+  loader_pattern_configure( :bracketwise_lookup, 
+                            { :key => :name },
+                            { :style => :instance_exec }   # Create object, run code in configuration file inside the object's context.
+                          )
+                          
+end
+
+class User4
+  attr_accessor :name, :age
+  
+  include FunWith::Patterns::Loader
+  loader_pattern_configure( :bracketwise_lookup, 
+                            { :key => :name }, 
+                            { :style => :yaml }
+                          )
+end
+  

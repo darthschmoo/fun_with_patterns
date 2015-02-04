@@ -63,9 +63,63 @@ For each directory you give it, it will:
 
 You can get some interesting behavior by overwriting individual methods.  For example, loading individual configurations from YAML or JSON or XML.  There's an example in the test/ folder.
 
+The default "style" of loading a file is "eval the contents and return the result."  This may not always be the desired behavior.  Other built in loading styles:
+
+      
+
+
+
 Note: If you want to manage your own registry by redefining loader_pattern_load_from_dir( dir ), loader_pattern_register_item( item ), etc., make sure you handle and report exceptions.
 
 
+More example code!
+
+    class Klass
+      
+      include FunWith::Patterns::Loader
+      loader_pattern_configure( :bracketwise_lookup, 
+                                :warn_on_key_change, 
+                                { :verbose => true, :load } )
+    end
+
+loader_pattern_configure is a quickie method for setting up a variety of behaviors.  Options so far:  
+      
+    :bracketwise_lookup  : instead of calling Klass.loader_pattern_registry_lookup( "string" )
+                           you can just call Klass["string"]
+                            
+    {:key => :<sym>}     : loader determines registry key by calling this method
+      
+    :warn_on_key_changes : If a newly loaded item has an existing registry key, it prints a warning as it overwrites
+      
+    :dont_warn_on_key_changes : (default)
+    :style => :(eval|instance_exec|yaml)  : Use one of the built-in loading styles.  Otherwise, set custom loading
+                                            behavior by defining your own Klass.loader_pattern_register_item
+
+
+The styles need some explanation:
+
+    :eval (default)  : evals the contents of the file and returns the result
+    
+    :instance_exec   : The file contents will run as though inside the object
+                       
+                       Klass.new do
+                         # ----- file contents for boris.rb starts here
+                         self.name "Boris"
+                         self.age 23
+                         self.kill_count 9
+                         # ----- file contents for boris.rb end here
+                       end
+                      
+    :yaml              The file contents describe a YAML hash, with the topmost keys describing
+                       the setter to call in order to set the attribute to that value.  For example,
+                       
+                       ---
+                       - name: Boris
+                       
+                       would end up calling klass_object.name=( "Boris" )
+                       
+
+TODO: I feel like a default label should maybe come out of the filename (zero-config and all that), but haven't built it.
 
 == Reloadable ==
 

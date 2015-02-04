@@ -1,7 +1,8 @@
 require 'yaml'
 
 
-# Change the behavior by overriding
+# Change the behavior by overriding loader_pattern_load_item( file )
+# Uses custom method, not LoadingStyle::YAML
 class YamlObj
   include FunWith::Patterns::Loader
   

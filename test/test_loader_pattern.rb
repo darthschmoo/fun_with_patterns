@@ -11,8 +11,12 @@ class TestLoaderPattern < FunWith::Patterns::TestCase
   
   context "testing User" do
     setup do
-      User.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users" ) )
-      User2.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users" ) )
+      User.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "eval" ) )
+      User2.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "eval" ) )
+      User3.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "instance_exec" ) )
+      User4.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "yaml" ) )
+      
+      @user_classes = [User, User2, User3, User4]
     end
     
     should "have all the right methods" do
@@ -22,13 +26,17 @@ class TestLoaderPattern < FunWith::Patterns::TestCase
                       :loader_pattern_register_item,
                       :loader_pattern_load_from_dir,
                       :loader_pattern_configure ]
-        assert_respond_to( User, method )
+        for klass in @user_classes
+          assert_respond_to( klass, method, "#{klass} should respond to ##{method}" )
+        end
       end
     end
     
-    should "load users from test/users and test/users/more" do
-      assert User.loader_pattern_registry_lookup("Gary Milhouse")
-      assert_equal 54, User.loader_pattern_registry_lookup("Gary Milhouse").age
+    should "load users from test/users into various classes" do
+      for klass in @user_classes
+        assert klass.loader_pattern_registry_lookup("Gary Milhouse"), "#{klass} did not load Gary.  Poor Gary."
+        assert_equal 54, klass.loader_pattern_registry_lookup("Gary Milhouse").age, "#{klass} did not load Gary with proper age data."
+      end
     end
     
     should "lookup via brackets" do

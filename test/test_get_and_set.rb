@@ -1,7 +1,5 @@
 require 'helper'
 
-FunWith::Patterns::GetAndSet.activate
-
 class TestGetAndSet < FunWith::Patterns::TestCase
   context "basics" do
     should "be plumbed correctly" do
@@ -12,6 +10,8 @@ class TestGetAndSet < FunWith::Patterns::TestCase
   context "trial run" do
     should "get and set" do
       c = Class.new
+      FunWith::Patterns::GetAndSet.activate( c )
+
       c.get_and_set( :radio, :radius, :radium )
       c.get_and_set( :radiate )
       c.get_and_set_boolean( :stringy, :flurmish )
@@ -46,6 +46,8 @@ class TestGetAndSet < FunWith::Patterns::TestCase
       m = Module.new
       c = Class.new
 
+      FunWith::Patterns::GetAndSet.activate( m )
+      
       c.send( :include, m )
       
       m.get_and_set( :radio, :radius, :radium )
@@ -72,6 +74,33 @@ class TestGetAndSet < FunWith::Patterns::TestCase
       assert_equal v1, o.radium( v1 )  # ==> "radioactive"
       assert_equal v2, o.radium( v2 )  # ==> "Madame Curie"
       assert_equal v2, o.radium()                 # ==> "Madame Curie"
+    end
+    
+    should "get and set blocks" do
+      c = Class.new
+      FunWith::Patterns::GetAndSet.activate( c )
+      c.get_and_set_block( :string_transformation )
+      
+      doubler = c.new
+      assert_respond_to( doubler, :string_transformation )
+      
+      assert_nil doubler.string_transformation( "hello" )
+      
+      doubler.string_transformation do |input|
+        "#{input}#{input}"
+      end
+      
+      assert_equal "hellohello", doubler.string_transformation( "hello" )
+      assert_equal "55", doubler.string_transformation( "5" )
+      
+      stripper = c.new
+      stripper.string_transformation do |input|
+        input.strip
+      end
+      
+      assert_equal "stripped", stripper.string_transformation( "   stripped      ")
+      
+      
     end
   end
 end

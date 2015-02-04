@@ -15,8 +15,9 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
-require 'fun_with_testing'
 require 'fun_with_patterns'
+require 'fun_with_testing'
+
 
 require_relative 'user'
 require_relative 'yaml_obj'
