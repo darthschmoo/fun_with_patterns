@@ -1,6 +1,5 @@
-class User
-  include FunWith::Patterns::Loader
-
+class User1
+  loader_pattern_configure()   
   attr_accessor :name, :age
   
   def initialize( name, age )
@@ -15,7 +14,6 @@ end
 class User2
   attr_accessor :name, :age
 
-  include FunWith::Patterns::Loader
   loader_pattern_configure( :bracketwise_lookup, {:key => :name} )
   
   def initialize( name, age )
@@ -29,7 +27,6 @@ class User3
   
   get_and_set :name, :age
   
-  include FunWith::Patterns::Loader
   loader_pattern_configure( :bracketwise_lookup, 
                             { :key => :name },
                             { :style => :instance_exec }   # Create object, run code in configuration file inside the object's context.
@@ -40,10 +37,15 @@ end
 class User4
   attr_accessor :name, :age
   
-  include FunWith::Patterns::Loader
   loader_pattern_configure( :bracketwise_lookup, 
                             { :key => :name }, 
                             { :style => :yaml }
                           )
+end
+
+class User5
+  attr_accessor :name, :age
+  
+  loader_pattern_configure( :bracketwise_lookup, :style => :yaml ) 
 end
   

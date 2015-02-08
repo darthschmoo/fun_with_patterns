@@ -79,7 +79,7 @@ More example code!
       include FunWith::Patterns::Loader
       loader_pattern_configure( :bracketwise_lookup, 
                                 :warn_on_key_change, 
-                                { :verbose => true, :load } )
+                                { :verbose => true, :load_style =>  } )
     end
 
 loader_pattern_configure is a quickie method for setting up a variety of behaviors.  Options so far:  
@@ -87,7 +87,8 @@ loader_pattern_configure is a quickie method for setting up a variety of behavio
     :bracketwise_lookup  : instead of calling Klass.loader_pattern_registry_lookup( "string" )
                            you can just call Klass["string"]
                             
-    {:key => :<sym>}     : loader determines registry key by calling this method
+    {:key => :<sym>}     : loader determines registry key by calling this method.  If no key is provided, then
+                           it infers a key by using "directory:subdirectory:filename_without_extension"
       
     :warn_on_key_changes : If a newly loaded item has an existing registry key, it prints a warning as it overwrites
       
@@ -117,27 +118,25 @@ The styles need some explanation:
                        - name: Boris
                        
                        would end up calling klass_object.name=( "Boris" )
+					   
+	<A MODULE>       : Extends the target with the provided module.  For example,
+	
+	                   module RandomLoaderStyle
+        					     def loader_pattern_load_item( file )
+    				             self.loader_pattern_rescue_failing_item_load( file ) do
+    				               obj = WeirdObject.factory( :random_seed => file.read )
+      
+    				               return obj
+                         end
+				               end
+                     end
+                     
+                     class RandomObjects
                        
+                     end
 
-TODO: I feel like a default label should maybe come out of the filename (zero-config and all that), but haven't built it.
 
-== Reloadable ==
 
-You're in the command line, developing a new class, and you find yourself forever restarting the whole project to affect changes, or constantly copy-pasting the class into the command line.  Tired?  Frustrated?  Let .reloadable! help!  Just put the method inside your class / module definition, and call Klass.reload! whenever you like.
-
-    require 'fun_with_patterns'
-
-    module SausageFest
-      class BratwurstCounter
-        reloadable!
-      
-        def initialize( initial_brat_count )
-          ... and so on
-          
-          
-    (irb) >>  SausageFest::BratwurstCounter.reload! 
-      
-Easy as peasy.  Note, it may be buggy if the file only contains part of the definition, defines other classes as well, or performs other actions.  Use at your own risk, and at great peril to your coworkers.
 
 
 

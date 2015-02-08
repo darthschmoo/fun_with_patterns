@@ -45,7 +45,7 @@ module FunWith
           nil
         end
         
-        # Default, may want to override how the registry behaves.
+        # Default method, user of the class may want to override how the registry behaves.
         # If you don't provide a key argument, then the object needs to 
         # respond to .loader_pattern_registry_key()
         def loader_pattern_register_item( obj, key = nil )
@@ -56,6 +56,7 @@ module FunWith
             if obj.respond_to?( :loader_pattern_registry_key )
               key = obj.loader_pattern_registry_key
             else
+              # inferring a default key from the filepath is handled by the load_from_dir() method
               raise "#{self.class} not registered.  No registry key given, and object does not respond to .loader_pattern_registry_key()."
             end
           end
@@ -112,7 +113,18 @@ module FunWith
             
             for file in dir.glob( :ext => self.loader_pattern_extension, :recurse => true )
               obj = self.loader_pattern_load_item( file )
-              self.loader_pattern_register_item( obj ) if self.loader_pattern_is_item_registerable?( obj )
+              
+              # checks to see if you're only allowed to register objects of certain types
+              if self.loader_pattern_is_item_registerable?( obj )
+                if obj.respond_to?( :loader_pattern_registry_key )
+                  self.loader_pattern_register_item( obj )
+                else
+                  # Generate a default key from the filename
+                  chunks = (file.relative_path_from( dir ).dirname.split << file.basename_no_ext).map(&:to_s).reject{|s| s == "." }
+                  key = chunks.join(":")
+                  self.loader_pattern_register_item( obj, key )
+                end
+              end
             end
           end
         end
@@ -168,6 +180,8 @@ module FunWith
                   when :yaml
                     self.extend( LoadingStyles::YAML )
                     self.loader_pattern_extension( [:yml, :yaml] )
+                  when Module
+                    self.extend( val )
                   else
                     raise "Unknown Loader loading style: #{val.inspect}"
                   end

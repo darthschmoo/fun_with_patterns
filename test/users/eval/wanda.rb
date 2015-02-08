@@ -1,1 +1,1 @@
-User.new( "Wanda Wimbledon", 53 )
+User1.new( "Wanda Wimbledon", 53 )

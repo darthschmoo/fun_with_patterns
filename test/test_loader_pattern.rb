@@ -11,12 +11,13 @@ class TestLoaderPattern < FunWith::Patterns::TestCase
   
   context "testing User" do
     setup do
-      User.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "eval" ) )
+      User1.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "eval" ) )
       User2.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "eval" ) )
       User3.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "instance_exec" ) )
       User4.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "yaml" ) )
+      User5.loader_pattern_load_from_dir( FunWith::Patterns.root( "test", "users", "yaml" ) )
       
-      @user_classes = [User, User2, User3, User4]
+      @user_classes = [User1, User2, User3, User4, User5]
     end
     
     should "have all the right methods" do
@@ -33,19 +34,23 @@ class TestLoaderPattern < FunWith::Patterns::TestCase
     end
     
     should "load users from test/users into various classes" do
-      for klass in @user_classes
+      for klass in @user_classes[0..3]
         assert klass.loader_pattern_registry_lookup("Gary Milhouse"), "#{klass} did not load Gary.  Poor Gary."
         assert_equal 54, klass.loader_pattern_registry_lookup("Gary Milhouse").age, "#{klass} did not load Gary with proper age data."
       end
+        
+      # User5 uses different keys, so handling separately
+      assert_equal 53, User5["wanda"].age
+      assert_equal "Wanda Wimbledon", User5["wanda"].name
     end
     
     should "lookup via brackets" do
-      User.loader_pattern_configure( :bracketwise_lookup )
-      assert_equal 54, User["Gary Milhouse"].age
+      User1.loader_pattern_configure( :bracketwise_lookup )
+      assert_equal 54, User1["Gary Milhouse"].age
       
       # User2 class is already configured for bracketwise lookup
       m = User2["Gary Milhouse"]
-      assert_kind_of( User, m )
+      assert_kind_of( User1, m )
       assert_equal 54, m.age
     end
   end
